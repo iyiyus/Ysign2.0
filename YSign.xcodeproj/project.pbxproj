@@ -1,0 +1,677 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		03D8F39559FCC41FC9CDAA25 /* SigningError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F90B21B3AFC06F0C5913FE45 /* SigningError.swift */; };
+		055566778899001122334455 /* BrandConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055566778899001122334456 /* BrandConfig.swift */; };
+		067FF1BD451FE1CDFF1677F3 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9334DFB66E5FCD877811604F /* AppState.swift */; };
+		0CCE0F3384814720B8FE6AC1 /* CertificateParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD49F48E3E90E89AED05768 /* CertificateParser.swift */; };
+		0D4FABCA5255106F0E4F505A /* AppSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC603D58682AAC0AB3DBD56 /* AppSource.swift */; };
+		15231A920A0B07FEEAEF56A0 /* WiFiTransferView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB8CABD3436F8E81E043E3E0 /* WiFiTransferView.swift */; };
+		187BA846CAE7095339ADA5D5 /* CertificatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2318388EACE0367FD1149F38 /* CertificatesView.swift */; };
+		306267388853F435B8B76D11 /* DeviceUDIDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D95A9A0040FAD7BBAA940018 /* DeviceUDIDView.swift */; };
+		3466667DCA430D969D19DDC8 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 7EDCFBAD24A6C8CEE30DFCEF /* ZIPFoundation */; };
+		39942CB5486B94D548A5FA69 /* CertificateInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55166E4E6F610856CBCC47D9 /* CertificateInfo.swift */; };
+		43B453D700998B66E712EC4D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B683E0944F0930C022E71B8 /* SettingsView.swift */; };
+		43B453D700998B66E712EC4E /* BrandConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 43B453D700998B66E712EC4F /* BrandConfig.json */; };
+		53A81BD45096ADE92702947B /* OpenSSLP12Parser.mm in Sources */ = {isa = PBXBuildFile; fileRef = 318A3B48944609E7FF8BAC4D /* OpenSSLP12Parser.mm */; };
+		559977FE2136215D70ACF937 /* InAppFilePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBF8DD59FFB0C4B386E5569 /* InAppFilePicker.swift */; };
+		662E8F7A9D12FBD624488F82 /* UDIDService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B47212FCE56B9C1F669B01 /* UDIDService.swift */; };
+		6799947EBF4E132405D7E2C7 /* CertificateStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FC3B269206A5B0FEB0DE06F /* CertificateStore.swift */; };
+		6C2FDB05160E1E43DD5D71E2 /* AppSourcesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0569E50393B577832EA25F8A /* AppSourcesView.swift */; };
+		6D7E678FF07EFA7C020109EC /* IPAFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC5975E639DA32A0E3D3D78 /* IPAFile.swift */; };
+		6F6C931A1243C2FC25213424 /* SigningTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = F83667269F1EB49341A8DB74 /* SigningTask.swift */; };
+		76A80C8B71EF9D399BE0C413 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8705F857B4FB6865386183 /* LibraryView.swift */; };
+		7849200DE9A23064D142D892 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E92D773EAB110022E9A7665 /* DownloadManager.swift */; };
+		78E8DFC92B1601D155BBBC79 /* YSignApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA98BB87F5B75A1EB584735 /* YSignApp.swift */; };
+		79C4248992511BA72C633DC6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B5DCB7307F3EDFD21DAA6AE /* ContentView.swift */; };
+		89816DDB3DC1DEC3A00F1B66 /* CodeSigner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD422DF1CA02C5D63E1A663 /* CodeSigner.swift */; };
+		8C7C7BED57EF0AD14C220C42 /* SigningConfigView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A23B4566543076E6222BC687 /* SigningConfigView.swift */; };
+		BB1122334455667788990011 /* SigningDefaultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1122334455667788990022 /* SigningDefaultsView.swift */; };
+		CC2233445566778899001122 /* SigningProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2233445566778899002233 /* SigningProgressView.swift */; };
+		DD3344556677889900112233 /* IPAInstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3344556677889900223344 /* IPAInstaller.swift */; };
+		EE4455667788990011223344 /* IPAInstallServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE4455667788990022334455 /* IPAInstallServerView.swift */; };
+		FF5566778899001122334455 /* HexViewerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF5566778899002233445566 /* HexViewerView.swift */; };
+		90AB27271C576CA2DDD0EA18 /* SigningPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = E783FEC67BA7569C4F2686C6 /* SigningPipeline.swift */; };
+		9576F2D185D3E569B0E59F74 /* DylibInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20ECBF552C89CD759D5125AE /* DylibInjector.swift */; };
+		A2958C60209BF834F21EF6F8 /* DownloadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89BF85CFE125E87CF7B7485 /* DownloadView.swift */; };
+		A5160BA65587352C8B0AB795 /* IPAHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48FC254B3E7E6269BCF930C /* IPAHandler.swift */; };
+		A75263895B198C718B78CE50 /* AppSourceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FDF39851FDB84B8F35317E1 /* AppSourceStore.swift */; };
+		A81FB4A48D68B36236DB81ED /* ProvisioningProfileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE3D5E0AA2B06A3F7BBBC8FF /* ProvisioningProfileStore.swift */; };
+		AC0EEEEBC8943D8964C4AE73 /* IPALibraryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D1196E1056CC457DE438ED4 /* IPALibraryManager.swift */; };
+		CB4EF905E30417148EA636EA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D94371DAC7DBC48A5715DA90 /* Assets.xcassets */; };
+		CD8924254CA97F00ED96AC95 /* SigningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90915EA02F2334EB168E73C7 /* SigningView.swift */; };
+		D126C162A8AD4857BC55BDE2 /* SigningHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE5AC549F97240302F60399 /* SigningHubView.swift */; };
+		D581DCFDB32FC36C6AEA5B90 /* Pods_YSign.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A876E267BB5171F83F9F03A /* Pods_YSign.framework */; };
+		D6675CE20FD5CD6D16265D5F /* MobileProvision.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE7B997B240D5CC2AFA1C14 /* MobileProvision.swift */; };
+		D9FE9C1F76EF3EA4889BF560 /* FileManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DA7F953444C94BEFB689CB5 /* FileManagerView.swift */; };
+		E319AA8087E9E121EFB07C0C /* MachOParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA625AF31F1F2B811C5D2297 /* MachOParser.swift */; };
+		ED656EDB10979C337565AA06 /* SourceAppsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97F6496167F9ED1633A43E05 /* SourceAppsView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		70F104A1812681D4117AE809 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		00205DD993923F3FFD0CE3E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		055566778899001122334456 /* BrandConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandConfig.swift; sourceTree = "<group>"; };
+		0569E50393B577832EA25F8A /* AppSourcesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSourcesView.swift; sourceTree = "<group>"; };
+		06B47212FCE56B9C1F669B01 /* UDIDService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UDIDService.swift; sourceTree = "<group>"; };
+		151F73C13FD3FF879A4DD59D /* YSign-Bridging-Header.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "YSign-Bridging-Header.h"; sourceTree = "<group>"; };
+		1E92D773EAB110022E9A7665 /* DownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
+		1FBF8DD59FFB0C4B386E5569 /* InAppFilePicker.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = YSign/Views/InAppFilePicker.swift; sourceTree = SOURCE_ROOT; };
+		20ECBF552C89CD759D5125AE /* DylibInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DylibInjector.swift; sourceTree = "<group>"; };
+		2318388EACE0367FD1149F38 /* CertificatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificatesView.swift; sourceTree = "<group>"; };
+		2AD422DF1CA02C5D63E1A663 /* CodeSigner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeSigner.swift; sourceTree = "<group>"; };
+		2E601B60764B021F18AC0183 /* YSign.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = YSign.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2FC3B269206A5B0FEB0DE06F /* CertificateStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateStore.swift; sourceTree = "<group>"; };
+		318A3B48944609E7FF8BAC4D /* OpenSSLP12Parser.mm */ = {isa = PBXFileReference; includeInIndex = 1; name = OpenSSLP12Parser.mm; path = OpenSSLP12Parser.mm; sourceTree = "<group>"; };
+		3DA7F953444C94BEFB689CB5 /* FileManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManagerView.swift; sourceTree = "<group>"; };
+		3FDF39851FDB84B8F35317E1 /* AppSourceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSourceStore.swift; sourceTree = "<group>"; };
+		4A876E267BB5171F83F9F03A /* Pods_YSign.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_YSign.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		55166E4E6F610856CBCC47D9 /* CertificateInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateInfo.swift; sourceTree = "<group>"; };
+		57B33A66D35A4DC7D052EB55 /* Pods-YSign.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YSign.debug.xcconfig"; path = "Target Support Files/Pods-YSign/Pods-YSign.debug.xcconfig"; sourceTree = "<group>"; };
+		6FC603D58682AAC0AB3DBD56 /* AppSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSource.swift; sourceTree = "<group>"; };
+		7B5DCB7307F3EDFD21DAA6AE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		7B683E0944F0930C022E71B8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		7BA98BB87F5B75A1EB584735 /* YSignApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YSignApp.swift; sourceTree = "<group>"; };
+		890D8D3F258C161DF12F5A36 /* OpenSSLP12Parser.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = OpenSSLP12Parser.h; path = OpenSSLP12Parser.h; sourceTree = "<group>"; };
+		8D1196E1056CC457DE438ED4 /* IPALibraryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPALibraryManager.swift; sourceTree = "<group>"; };
+		90915EA02F2334EB168E73C7 /* SigningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningView.swift; sourceTree = "<group>"; };
+		9334DFB66E5FCD877811604F /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		97F6496167F9ED1633A43E05 /* SourceAppsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceAppsView.swift; sourceTree = "<group>"; };
+		9B69CCA430DB40B25A32C1DB /* Pods-YSign.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YSign.release.xcconfig"; path = "Target Support Files/Pods-YSign/Pods-YSign.release.xcconfig"; sourceTree = "<group>"; };
+		A23B4566543076E6222BC687 /* SigningConfigView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningConfigView.swift; sourceTree = "<group>"; };
+		BB1122334455667788990022 /* SigningDefaultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningDefaultsView.swift; sourceTree = "<group>"; };
+		CC2233445566778899002233 /* SigningProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningProgressView.swift; sourceTree = "<group>"; };
+		DD3344556677889900223344 /* IPAInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPAInstaller.swift; sourceTree = "<group>"; };
+		EE4455667788990022334455 /* IPAInstallServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPAInstallServerView.swift; sourceTree = "<group>"; };
+		FF5566778899002233445566 /* HexViewerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexViewerView.swift; sourceTree = "<group>"; };
+		A89BF85CFE125E87CF7B7485 /* DownloadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadView.swift; sourceTree = "<group>"; };
+		AA625AF31F1F2B811C5D2297 /* MachOParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachOParser.swift; sourceTree = "<group>"; };
+		ADD49F48E3E90E89AED05768 /* CertificateParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateParser.swift; sourceTree = "<group>"; };
+		B1C63C6ADCDD6AF4525F9BEB /* YSign.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = YSign.entitlements; sourceTree = "<group>"; };
+		CAC5975E639DA32A0E3D3D78 /* IPAFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPAFile.swift; sourceTree = "<group>"; };
+		CD8705F857B4FB6865386183 /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
+		D48FC254B3E7E6269BCF930C /* IPAHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPAHandler.swift; sourceTree = "<group>"; };
+		D94371DAC7DBC48A5715DA90 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D95A9A0040FAD7BBAA940018 /* DeviceUDIDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceUDIDView.swift; sourceTree = "<group>"; };
+		DE3D5E0AA2B06A3F7BBBC8FF /* ProvisioningProfileStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProvisioningProfileStore.swift; sourceTree = "<group>"; };
+		DFE7B997B240D5CC2AFA1C14 /* MobileProvision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileProvision.swift; sourceTree = "<group>"; };
+		E783FEC67BA7569C4F2686C6 /* SigningPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningPipeline.swift; sourceTree = "<group>"; };
+		EB8CABD3436F8E81E043E3E0 /* WiFiTransferView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WiFiTransferView.swift; sourceTree = "<group>"; };
+		F83667269F1EB49341A8DB74 /* SigningTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningTask.swift; sourceTree = "<group>"; };
+		F90B21B3AFC06F0C5913FE45 /* SigningError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningError.swift; sourceTree = "<group>"; };
+		FDE5AC549F97240302F60399 /* SigningHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningHubView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		BA5D2DAF9F7A70923DBE5F17 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3466667DCA430D969D19DDC8 /* ZIPFoundation in Frameworks */,
+				D581DCFDB32FC36C6AEA5B90 /* Pods_YSign.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		06245219FC60C786FCBF8383 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4A876E267BB5171F83F9F03A /* Pods_YSign.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		43B0F8B3FA4FC15F6D412CDB /* ObjC */ = {
+			isa = PBXGroup;
+			children = (
+				890D8D3F258C161DF12F5A36 /* OpenSSLP12Parser.h */,
+				318A3B48944609E7FF8BAC4D /* OpenSSLP12Parser.mm */,
+			);
+			name = ObjC;
+			path = ObjC;
+			sourceTree = "<group>";
+		};
+		6E9B615CF7F513F48C6849DB /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				06B47212FCE56B9C1F669B01 /* UDIDService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		9A64C9891A68CC906CAB952B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0569E50393B577832EA25F8A /* AppSourcesView.swift */,
+				2318388EACE0367FD1149F38 /* CertificatesView.swift */,
+				D95A9A0040FAD7BBAA940018 /* DeviceUDIDView.swift */,
+				A89BF85CFE125E87CF7B7485 /* DownloadView.swift */,
+				3DA7F953444C94BEFB689CB5 /* FileManagerView.swift */,
+				CD8705F857B4FB6865386183 /* LibraryView.swift */,
+				7B683E0944F0930C022E71B8 /* SettingsView.swift */,
+				A23B4566543076E6222BC687 /* SigningConfigView.swift */,
+				BB1122334455667788990022 /* SigningDefaultsView.swift */,
+				CC2233445566778899002233 /* SigningProgressView.swift */,
+				FDE5AC549F97240302F60399 /* SigningHubView.swift */,
+				90915EA02F2334EB168E73C7 /* SigningView.swift */,
+				97F6496167F9ED1633A43E05 /* SourceAppsView.swift */,
+				EB8CABD3436F8E81E043E3E0 /* WiFiTransferView.swift */,
+				1FBF8DD59FFB0C4B386E5569 /* InAppFilePicker.swift */,
+				EE4455667788990022334455 /* IPAInstallServerView.swift */,
+				FF5566778899002233445566 /* HexViewerView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		9B5B564A504131AFC282AC92 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2E601B60764B021F18AC0183 /* YSign.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C9C6E38F686FE42595EA0E0B /* Stores */ = {
+			isa = PBXGroup;
+			children = (
+				3FDF39851FDB84B8F35317E1 /* AppSourceStore.swift */,
+				2FC3B269206A5B0FEB0DE06F /* CertificateStore.swift */,
+				1E92D773EAB110022E9A7665 /* DownloadManager.swift */,
+				8D1196E1056CC457DE438ED4 /* IPALibraryManager.swift */,
+				DE3D5E0AA2B06A3F7BBBC8FF /* ProvisioningProfileStore.swift */,
+			);
+			path = Stores;
+			sourceTree = "<group>";
+		};
+		CCB467B0A7A85A11FCA637B6 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				57B33A66D35A4DC7D052EB55 /* Pods-YSign.debug.xcconfig */,
+				9B69CCA430DB40B25A32C1DB /* Pods-YSign.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		CF34D9512FF5AB71077F6533 /* SigningEngine */ = {
+			isa = PBXGroup;
+			children = (
+				ADD49F48E3E90E89AED05768 /* CertificateParser.swift */,
+				2AD422DF1CA02C5D63E1A663 /* CodeSigner.swift */,
+				20ECBF552C89CD759D5125AE /* DylibInjector.swift */,
+				D48FC254B3E7E6269BCF930C /* IPAHandler.swift */,
+				AA625AF31F1F2B811C5D2297 /* MachOParser.swift */,
+				E783FEC67BA7569C4F2686C6 /* SigningPipeline.swift */,
+			);
+			name = SigningEngine;
+			path = Sources/SigningEngine;
+			sourceTree = "<group>";
+		};
+		DD3344556677889900334455 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				DD3344556677889900223344 /* IPAInstaller.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		DDF3B3E7DF634ED6946D3EC6 /* YSign */ = {
+			isa = PBXGroup;
+			children = (
+				9334DFB66E5FCD877811604F /* AppState.swift */,
+				D94371DAC7DBC48A5715DA90 /* Assets.xcassets */,
+				43B453D700998B66E712EC4F /* BrandConfig.json */,
+				7B5DCB7307F3EDFD21DAA6AE /* ContentView.swift */,
+				00205DD993923F3FFD0CE3E1 /* Info.plist */,
+				B1C63C6ADCDD6AF4525F9BEB /* YSign.entitlements */,
+				7BA98BB87F5B75A1EB584735 /* YSignApp.swift */,
+				E13E5AA5FB8BC5D696433D12 /* Models */,
+				6E9B615CF7F513F48C6849DB /* Services */,
+				C9C6E38F686FE42595EA0E0B /* Stores */,
+				9A64C9891A68CC906CAB952B /* Views */,
+				43B0F8B3FA4FC15F6D412CDB /* ObjC */,
+				DD3344556677889900334455 /* Utils */,
+				151F73C13FD3FF879A4DD59D /* YSign-Bridging-Header.h */,
+			);
+			path = YSign;
+			sourceTree = "<group>";
+		};
+		DE99F221F8C1932D86EE7B33 = {
+			isa = PBXGroup;
+			children = (
+				CF34D9512FF5AB71077F6533 /* SigningEngine */,
+				DDF3B3E7DF634ED6946D3EC6 /* YSign */,
+				9B5B564A504131AFC282AC92 /* Products */,
+				CCB467B0A7A85A11FCA637B6 /* Pods */,
+				06245219FC60C786FCBF8383 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		E13E5AA5FB8BC5D696433D12 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				6FC603D58682AAC0AB3DBD56 /* AppSource.swift */,
+				055566778899001122334456 /* BrandConfig.swift */,
+				55166E4E6F610856CBCC47D9 /* CertificateInfo.swift */,
+				CAC5975E639DA32A0E3D3D78 /* IPAFile.swift */,
+				DFE7B997B240D5CC2AFA1C14 /* MobileProvision.swift */,
+				F90B21B3AFC06F0C5913FE45 /* SigningError.swift */,
+				F83667269F1EB49341A8DB74 /* SigningTask.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3A46980E272A4F17AE669900 /* YSign */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9F6D40850EC68AC7AD0AC1D5 /* Build configuration list for PBXNativeTarget "YSign" */;
+			buildPhases = (
+				B3B4CE6A0107700F4E652DC5 /* [CP] Check Pods Manifest.lock */,
+				E8757DF29899EE49C4981099 /* Sources */,
+				7A28CB7BA418F2325C681658 /* Resources */,
+				BA5D2DAF9F7A70923DBE5F17 /* Frameworks */,
+				70F104A1812681D4117AE809 /* Embed Frameworks */,
+				7DA6C7D06FAB585219764CF7 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = YSign;
+			packageProductDependencies = (
+				7EDCFBAD24A6C8CEE30DFCEF /* ZIPFoundation */,
+			);
+			productName = YSign;
+			productReference = 2E601B60764B021F18AC0183 /* YSign.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C18F77715898B9D94B384548 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					3A46980E272A4F17AE669900 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 7F6DDEE5EED3E50DFFDE9B6B /* Build configuration list for PBXProject "YSign" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = DE99F221F8C1932D86EE7B33;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B6A2EF0A6EE441E8DD297A51 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 9B5B564A504131AFC282AC92 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3A46980E272A4F17AE669900 /* YSign */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7A28CB7BA418F2325C681658 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				43B453D700998B66E712EC4E /* BrandConfig.json in Resources */,
+				CB4EF905E30417148EA636EA /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		7DA6C7D06FAB585219764CF7 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-YSign/Pods-YSign-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-YSign/Pods-YSign-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-YSign/Pods-YSign-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B3B4CE6A0107700F4E652DC5 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-YSign-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E8757DF29899EE49C4981099 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				055566778899001122334455 /* BrandConfig.swift in Sources */,
+				0D4FABCA5255106F0E4F505A /* AppSource.swift in Sources */,
+				A75263895B198C718B78CE50 /* AppSourceStore.swift in Sources */,
+				6C2FDB05160E1E43DD5D71E2 /* AppSourcesView.swift in Sources */,
+				067FF1BD451FE1CDFF1677F3 /* AppState.swift in Sources */,
+				39942CB5486B94D548A5FA69 /* CertificateInfo.swift in Sources */,
+				0CCE0F3384814720B8FE6AC1 /* CertificateParser.swift in Sources */,
+				6799947EBF4E132405D7E2C7 /* CertificateStore.swift in Sources */,
+				187BA846CAE7095339ADA5D5 /* CertificatesView.swift in Sources */,
+				89816DDB3DC1DEC3A00F1B66 /* CodeSigner.swift in Sources */,
+				79C4248992511BA72C633DC6 /* ContentView.swift in Sources */,
+				306267388853F435B8B76D11 /* DeviceUDIDView.swift in Sources */,
+				7849200DE9A23064D142D892 /* DownloadManager.swift in Sources */,
+				A2958C60209BF834F21EF6F8 /* DownloadView.swift in Sources */,
+				9576F2D185D3E569B0E59F74 /* DylibInjector.swift in Sources */,
+				D9FE9C1F76EF3EA4889BF560 /* FileManagerView.swift in Sources */,
+				6D7E678FF07EFA7C020109EC /* IPAFile.swift in Sources */,
+				A5160BA65587352C8B0AB795 /* IPAHandler.swift in Sources */,
+				AC0EEEEBC8943D8964C4AE73 /* IPALibraryManager.swift in Sources */,
+				76A80C8B71EF9D399BE0C413 /* LibraryView.swift in Sources */,
+				E319AA8087E9E121EFB07C0C /* MachOParser.swift in Sources */,
+				D6675CE20FD5CD6D16265D5F /* MobileProvision.swift in Sources */,
+				43B453D700998B66E712EC4D /* SettingsView.swift in Sources */,
+				8C7C7BED57EF0AD14C220C42 /* SigningConfigView.swift in Sources */,
+				03D8F39559FCC41FC9CDAA25 /* SigningError.swift in Sources */,
+				D126C162A8AD4857BC55BDE2 /* SigningHubView.swift in Sources */,
+				90AB27271C576CA2DDD0EA18 /* SigningPipeline.swift in Sources */,
+				6F6C931A1243C2FC25213424 /* SigningTask.swift in Sources */,
+				CD8924254CA97F00ED96AC95 /* SigningView.swift in Sources */,
+				ED656EDB10979C337565AA06 /* SourceAppsView.swift in Sources */,
+				662E8F7A9D12FBD624488F82 /* UDIDService.swift in Sources */,
+				15231A920A0B07FEEAEF56A0 /* WiFiTransferView.swift in Sources */,
+				78E8DFC92B1601D155BBBC79 /* YSignApp.swift in Sources */,
+				53A81BD45096ADE92702947B /* OpenSSLP12Parser.mm in Sources */,
+				A81FB4A48D68B36236DB81ED /* ProvisioningProfileStore.swift in Sources */,
+				559977FE2136215D70ACF937 /* InAppFilePicker.swift in Sources */,
+				BB1122334455667788990011 /* SigningDefaultsView.swift in Sources */,
+				CC2233445566778899001122 /* SigningProgressView.swift in Sources */,
+				DD3344556677889900112233 /* IPAInstaller.swift in Sources */,
+				EE4455667788990011223344 /* IPAInstallServerView.swift in Sources */,
+				FF5566778899001122334455 /* HexViewerView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		6D4942A5EE8F047E199BBE23 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 2.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		8E795526FFEAACC0BE6F2EBF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9B69CCA430DB40B25A32C1DB /* Pods-YSign.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = YSign/YSign.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/YSign/Frameworks\"",
+				);
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = YSign/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				OTHER_LDFLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ysign.app;
+				SDKROOT = iphoneos;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "YSign/YSign-Bridging-Header.h";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		AB6A27762A096F1FF95537CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 2.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		D871C032B8D467C8AFBFBC49 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 57B33A66D35A4DC7D052EB55 /* Pods-YSign.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = YSign/YSign.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/YSign/Frameworks\"",
+				);
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = YSign/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				OTHER_LDFLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ysign.app;
+				SDKROOT = iphoneos;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "YSign/YSign-Bridging-Header.h";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7F6DDEE5EED3E50DFFDE9B6B /* Build configuration list for PBXProject "YSign" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6D4942A5EE8F047E199BBE23 /* Debug */,
+				AB6A27762A096F1FF95537CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9F6D40850EC68AC7AD0AC1D5 /* Build configuration list for PBXNativeTarget "YSign" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D871C032B8D467C8AFBFBC49 /* Debug */,
+				8E795526FFEAACC0BE6F2EBF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B6A2EF0A6EE441E8DD297A51 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.18;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7EDCFBAD24A6C8CEE30DFCEF /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B6A2EF0A6EE441E8DD297A51 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = C18F77715898B9D94B384548 /* Project object */;
+}

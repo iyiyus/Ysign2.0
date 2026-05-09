@@ -1,0 +1,23 @@
+{
+  "short_site": "",
+  "app_bundle_id": "com.ysign.app",
+  "app_name": "YSign",
+  "plist_url": "",
+  "default_app_source_urls": [],
+  "app_icon_url": "",
+  "app_launch_icon_url": "",
+  "group": "",
+  "contact_url": "https://t.me/ysign",
+  "buy_url": "",
+  "tutorial_url": "https://docs.qq.com/doc/DUmZhR2JhYld2U2Z5",
+  "notice": "",
+  "exchange": true,
+  "whitelist": false,
+  "import_permissions": true,
+  "install_server_urls": [],
+  "online_branding_enabled": false,
+  "remote_config_url": "",
+  "license_domain": "",
+  "license_verify_url": "https://ysign.iosk.cn/api/v1/license/domain-verify",
+  "license_app_id": 1
+}
