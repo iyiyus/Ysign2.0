@@ -2,6 +2,7 @@ import SwiftUI
 import Combine
 import Foundation
 import Darwin
+import CommonCrypto
 
 /// 应用全局状态管理
 ///
@@ -79,6 +80,15 @@ final class AppState: ObservableObject {
     /// 导航到文件管理中的指定文件夹（跨 Tab 通信）
     @Published var navigateToFolder: URL?
 
+    /// 是否展示品牌启动图浮层
+    @Published var showBrandLaunch = false
+
+    /// 品牌启动图 URL（启动时立即确定，不等网络）
+    @Published var brandLaunchURL = ""
+
+    /// 是否已完成启动初始化（防止重复执行）
+    private var didPerformStartup = false
+
     /// Tab 页枚举
     enum Tab: String, CaseIterable {
         case apps = "软件源"
@@ -130,6 +140,15 @@ final class AppState: ObservableObject {
         let data: DomainVerifyPayload?
     }
 
+    /// 证书站嵌入域名读取器 (见 BrandHost.swift)。
+    ///
+    /// 保留同名别名是为了不改动下方大量引用, 内部直接转发到全局工具。
+    private enum EmbeddedHostReader {
+        static func resolveSignedHost() -> String? {
+            BrandHost.resolveSignedHost()
+        }
+    }
+
     /// 域名授权校验结果。
     ///
     /// 单独用枚举表达，而不是简单 Bool，原因是：
@@ -170,6 +189,60 @@ final class AppState: ObservableObject {
         brandConfigStatusMessage = "已加载包内品牌配置"
     }
 
+    /// 统一启动入口，保证只执行一次。
+    func performStartup() async {
+        guard !didPerformStartup else { return }
+        didPerformStartup = true
+
+        // 旧版本数据迁移：Documents/YSign/* → Library/Application Support/YSign/*
+        YSInternalStorage.migrateIfNeeded(oldSubpath: "YSign/Certificates", newName: "Certificates")
+        YSInternalStorage.migrateIfNeeded(oldSubpath: "YSign/Profiles",     newName: "Profiles")
+        YSInternalStorage.migrateIfNeeded(oldSubpath: "YSign/Library",      newName: "Library")
+        YSInternalStorage.migrateIfNeeded(oldSubpath: "YSign/Sources",      newName: "Sources")
+        YSInternalStorage.migrateIfNeeded(oldSubpath: "YSign/Branding",     newName: "Branding")
+        YSInternalStorage.migrateIfNeeded(oldSubpath: "YSign/Signed",       newName: "Signed")
+        // 旧 YSign 根目录清理
+        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let oldRoot = docs.appendingPathComponent("YSign")
+        if let children = try? FileManager.default.contentsOfDirectory(atPath: oldRoot.path), children.isEmpty {
+            try? FileManager.default.removeItem(at: oldRoot)
+        }
+
+        // 立即触发网络权限弹窗（iOS 首次联网需要用户授权）
+        await triggerNetworkPermission()
+
+        // 先读包内配置，立即决定是否展示启动图（用缓存图，不等网络）
+        let bundled = BrandConfig.loadFromBundle()
+        if !bundled.appLaunchIconURL.isEmpty {
+            brandLaunchURL = bundled.appLaunchIconURL
+            showBrandLaunch = true
+        }
+
+        await bootstrapBranding()
+
+        guard brandLicenseAuthorized else { return }
+
+        // 品牌配置拉取完成后更新启动图 URL（下次启动生效）
+        if !brandConfig.appLaunchIconURL.isEmpty && brandLaunchURL.isEmpty {
+            brandLaunchURL = brandConfig.appLaunchIconURL
+            showBrandLaunch = true
+        }
+
+        await loadCertificates()
+        await refreshLibrary()
+        await refreshSources()
+        await autoImportBrandCertificateIfNeeded()
+    }
+
+    /// 发一个最小网络请求，触发 iOS 的"允许联网"弹窗。
+    /// 必须在所有业务网络请求之前调用，否则后续请求全部静默失败。
+    private func triggerNetworkPermission() async {
+        let url = URL(string: "https://captive.apple.com")!
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 5
+        _ = try? await URLSession.shared.data(for: request)
+    }
+
     /// 启动时执行贴牌初始化。
     ///
     /// 初始化内容包括：
@@ -203,9 +276,11 @@ final class AppState: ObservableObject {
             authoritative: origin == .remote || origin == .cached
         )
 
+        // 证书站重签场景下，授权由嵌入域名自身证明，不需要再打扰中心授权服务。
         if shouldUseOnlineBranding(baseConfig: resolvedConfig),
            brandLicenseAuthorized,
-           !brandLicenseDomain.isEmpty {
+           !brandLicenseDomain.isEmpty,
+           EmbeddedHostReader.resolveSignedHost() == nil {
             startBrandLicenseRefreshLoop(baseConfig: resolvedConfig, domain: brandLicenseDomain)
         }
     }
@@ -236,7 +311,8 @@ final class AppState: ObservableObject {
 
         if shouldUseOnlineBranding(baseConfig: result.config),
            brandLicenseAuthorized,
-           !brandLicenseDomain.isEmpty {
+           !brandLicenseDomain.isEmpty,
+           EmbeddedHostReader.resolveSignedHost() == nil {
             startBrandLicenseRefreshLoop(baseConfig: result.config, domain: brandLicenseDomain)
         }
 
@@ -245,11 +321,24 @@ final class AppState: ObservableObject {
 
     /// 判断当前是否应启用在线贴牌逻辑。
     ///
-    /// 触发条件有两个：
+    /// 触发条件有三个（任一满足即启用）：
     /// 1. 包内配置显式开启 `online_branding_enabled`
     /// 2. 设置页里填写了远程配置覆盖 URL
+    /// 3. 证书站 PHP 重签时已经把域名嵌到了 Info.plist 里
+    ///
+    /// 第 3 条是贴牌 IPA 最常见的路径：证书站通过重签把自己的域名写进 App，
+    /// App 启动后就该自动去那个域名拉最新的品牌配置。
     private func shouldUseOnlineBranding(baseConfig: BrandConfig) -> Bool {
-        baseConfig.onlineBrandingEnabled || !effectiveRemoteConfigURL(for: baseConfig).isEmpty
+        if baseConfig.onlineBrandingEnabled {
+            return true
+        }
+        if !effectiveRemoteConfigURL(for: baseConfig).isEmpty {
+            return true
+        }
+        if EmbeddedHostReader.resolveSignedHost() != nil {
+            return true
+        }
+        return false
     }
 
     /// 解析最终应生效的在线品牌配置。
@@ -279,31 +368,45 @@ final class AppState: ObservableObject {
             return (baseConfig, .bundled, "无法确定授权域名，已回退包内配置")
         }
 
-        let verification = await verifyBrandDomain(domain: domain, baseConfig: baseConfig)
+        // 证书站重签 YSign 时会把自己的域名加密嵌到 Info.plist。
+        // 这个嵌入动作本身就是“本 IPA 被该证书站授权”的凭据，
+        // 所以当存在嵌入域名时，客户端直接信任它，不再请求外部授权接口。
+        // 这样做的好处：
+        // - 解耦各证书站和中心授权服务，不需要所有证书站都去中心服注册
+        // - 去除外部网络依赖，贴牌包启动更快
+        let hasEmbeddedHost = EmbeddedHostReader.resolveSignedHost() != nil
 
-        switch verification {
-        case .authorized(let payload):
+        if hasEmbeddedHost {
             brandLicenseAuthorized = true
             clearUnauthorizedLicenseState()
-            if let payload {
-                applyBrandLicensePayload(payload)
-            } else {
+            clearBrandLicensePayload()
+        } else {
+            let verification = await verifyBrandDomain(domain: domain, baseConfig: baseConfig)
+
+            switch verification {
+            case .authorized(let payload):
+                brandLicenseAuthorized = true
+                clearUnauthorizedLicenseState()
+                if let payload {
+                    applyBrandLicensePayload(payload)
+                } else {
+                    clearBrandLicensePayload()
+                }
+
+            case .unauthorized(let message):
+                brandLicenseAuthorized = false
                 clearBrandLicensePayload()
+                triggerUnauthorizedLicense(message: message)
+                return (baseConfig, .bundled, message)
+
+            case .failed(let message):
+                brandLicenseAuthorized = true
+                clearBrandLicensePayload()
+                return (baseConfig, .bundled, message)
             }
-
-        case .unauthorized(let message):
-            brandLicenseAuthorized = false
-            clearBrandLicensePayload()
-            triggerUnauthorizedLicense(message: message)
-            return (baseConfig, .bundled, message)
-
-        case .failed(let message):
-            brandLicenseAuthorized = true
-            clearBrandLicensePayload()
-            return (baseConfig, .bundled, message)
         }
 
-        if let remoteConfig = await fetchRemoteBrandConfig(from: remoteConfigURL) {
+        if let remoteConfig = await fetchRemoteBrandConfig(from: remoteConfigURL, baseConfig: baseConfig) {
             saveCachedBrandConfig(remoteConfig)
             return (remoteConfig, .remote, "已从远程同步品牌配置")
         }
@@ -331,22 +434,45 @@ final class AppState: ObservableObject {
         }
     }
 
-    /// 读取设置页中覆盖后的远程配置地址。
+    /// 读取远程配置地址。
+    ///
+    /// 优先级依次是：
+    /// 1. 设置页填写的覆盖地址（开发调试方便）
+    /// 2. 包内 / 远程配置中直接声明的 `remote_config_url`
+    /// 3. 从证书站加密嵌入到 Info.plist 的域名推导出的 `/api/signtool/index`
+    ///
+    /// 第 3 条是贴牌 IPA 的默认行为：只要证书站重签时嵌了域名，
+    /// YSign 就会自动向该域名上的 `/api/signtool/index` 拉取贴牌配置。
     private func effectiveRemoteConfigURL(for config: BrandConfig) -> String {
         let override = UserDefaults.standard.string(forKey: "brandRemoteConfigURLOverride")?
             .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         if !override.isEmpty {
             return normalizeSingleURL(override)
         }
-        return config.normalizedRemoteConfigURL
+        if !config.normalizedRemoteConfigURL.isEmpty {
+            return config.normalizedRemoteConfigURL
+        }
+        if let host = EmbeddedHostReader.resolveSignedHost(), !host.isEmpty {
+            return "https://\(host)/api/signtool/index"
+        }
+        return ""
     }
 
-    /// 读取设置页中覆盖后的授权域名。
+    /// 读取授权域名。
+    ///
+    /// 优先级依次是：
+    /// 1. 设置页覆盖域名
+    /// 2. 证书站加密嵌入到 Info.plist 的域名（贴牌 IPA 的主路径）
+    /// 3. `BrandConfig.license_domain`
+    /// 4. 从 `remote_config_url` 的 Host 推导
     private func effectiveLicenseDomain(for config: BrandConfig, remoteConfigURL: String) -> String {
         let override = UserDefaults.standard.string(forKey: "brandLicenseDomainOverride")?
             .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         if !override.isEmpty {
             return override
+        }
+        if let embedded = EmbeddedHostReader.resolveSignedHost(), !embedded.isEmpty {
+            return embedded
         }
         if !config.normalizedLicenseDomain.isEmpty {
             return config.normalizedLicenseDomain
@@ -456,15 +582,31 @@ final class AppState: ObservableObject {
 
     /// 拉取远程品牌配置。
     ///
-    /// 兼容两种常见返回：
-    /// - 直接返回 `BrandConfig` JSON
-    /// - 包在 `data / result / config / brand_config` 字段中
-    private func fetchRemoteBrandConfig(from urlString: String) async -> BrandConfig? {
+    /// 和证书站 PHP `/api/signtool/index` 协议保持一致：
+    /// - Method: `POST`
+    /// - Body:   `app_bundle_id=<当前 App 的 bundle id>`（form-url-encoded）
+    /// - 成功返回：`{ "code": 1, "msg": "...", "data": { "domain": ..., "config": { ...贴牌字段... } } }`
+    ///
+    /// 兼容场景：
+    /// - 证书站 PHP `/api/signtool/index` 的 `data.config` 嵌套结构（主场景）
+    /// - 某些自建后端直接返回 `BrandConfig` 顶层 JSON
+    /// - 某些自建后端返回 `{ "data": <BrandConfig> }` 的扁平结构
+    private func fetchRemoteBrandConfig(from urlString: String, baseConfig: BrandConfig) async -> BrandConfig? {
         guard let url = URL(string: urlString) else { return nil }
 
         do {
             var request = URLRequest(url: url)
+            request.httpMethod = "POST"
             request.timeoutInterval = 15
+            request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+            request.setValue("application/json", forHTTPHeaderField: "Accept")
+
+            // PHP 侧根据 `app_bundle_id` 精确匹配对应的贴牌配置。
+            // 运行时取的是当前 App 的 bundle id，因为证书站在重签时已经用 zsign
+            // 把 bundle id 改成了贴牌配置里约定的值。
+            let bundleID = Bundle.main.bundleIdentifier ?? baseConfig.appBundleID
+            let bodyString = "app_bundle_id=" + percentEncodeFormValue(bundleID)
+            request.httpBody = bodyString.data(using: .utf8)
 
             let (data, response) = try await URLSession.shared.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse,
@@ -472,33 +614,55 @@ final class AppState: ObservableObject {
                 return nil
             }
 
-            if let direct = try? JSONDecoder().decode(BrandConfig.self, from: data) {
-                return direct
-            }
+            // 1. 先尝试按证书站 PHP 协议解析：data.config
+            if let jsonObject = try? JSONSerialization.jsonObject(with: data),
+               let dictionary = jsonObject as? [String: Any] {
 
-            guard let jsonObject = try? JSONSerialization.jsonObject(with: data) else {
-                return nil
-            }
+                // PHP ThinkPHP 的标准成功码是 1；为兼容性也放行 200 / 0。
+                let code = (dictionary["code"] as? Int) ?? Int(dictionary["code"] as? String ?? "") ?? 1
+                let isSuccess = code == 1 || code == 200 || code == 0
 
-            if let directDictionary = jsonObject as? [String: Any],
-               let decoded = decodeBrandConfig(from: directDictionary) {
-                return decoded
-            }
+                if isSuccess,
+                   let dataObject = dictionary["data"] as? [String: Any],
+                   let configObject = dataObject["config"] as? [String: Any],
+                   let decoded = decodeBrandConfig(from: configObject) {
+                    return decoded
+                }
 
-            if let dictionary = jsonObject as? [String: Any] {
-                let keys = ["data", "result", "config", "brand_config"]
-                for key in keys {
+                // 2. 次选：有些自建后端直接把 BrandConfig 放在 data / result / config / brand_config 里
+                let fallbackKeys = ["data", "result", "config", "brand_config"]
+                for key in fallbackKeys {
                     if let nested = dictionary[key],
                        let decoded = decodeBrandConfig(from: nested) {
                         return decoded
                     }
                 }
+
+                // 3. 最后：整个顶层对象本身就是 BrandConfig
+                if let decoded = decodeBrandConfig(from: dictionary) {
+                    return decoded
+                }
+            }
+
+            // 4. 顶层直接是 JSON 数组或标量时再走一次直接解码
+            if let direct = try? JSONDecoder().decode(BrandConfig.self, from: data) {
+                return direct
             }
 
             return nil
         } catch {
             return nil
         }
+    }
+
+    /// 对 form-url-encoded 的单个值做最小必要的百分号编码。
+    ///
+    /// `URLComponents` 的默认 allowed 字符集不包含 `=`、`&` 等，
+    /// 所以这里改用更严格的 `.alphanumerics` 加回少量安全字符。
+    private func percentEncodeFormValue(_ value: String) -> String {
+        var allowed = CharacterSet.alphanumerics
+        allowed.insert(charactersIn: "-._~")
+        return value.addingPercentEncoding(withAllowedCharacters: allowed) ?? value
     }
 
     /// 把任意 JSON 对象尝试解码为 `BrandConfig`。
@@ -530,8 +694,7 @@ final class AppState: ObservableObject {
 
     /// 品牌缓存目录。
     private func brandingDirectoryURL() -> URL {
-        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        return docs.appendingPathComponent("YSign/Branding")
+        YSInternalStorage.directory("Branding")
     }
 
     /// 远程品牌配置缓存文件路径。
@@ -604,17 +767,10 @@ final class AppState: ObservableObject {
     ///
     /// 当前产品要求是：
     /// - 发现未授权后立即提示用户
-    /// - 10 秒后自动退出应用
     private func triggerUnauthorizedLicense(message: String) {
         unauthorizedLicenseMessage = message
         showingUnauthorizedLicenseAlert = true
-
-        unauthorizedExitTask?.cancel()
-        unauthorizedExitTask = Task {
-            try? await Task.sleep(nanoseconds: 10 * 1_000_000_000)
-            guard !Task.isCancelled else { return }
-            exit(0)
-        }
+        // 不再自动退出，仅弹窗提示
     }
 
     /// 清空未授权弹窗和延时退出状态。
@@ -628,6 +784,43 @@ final class AppState: ObservableObject {
     func loadCertificates() async {
         let store = CertificateStore()
         certificates = await store.loadAll()
+    }
+
+    /// 为当前证书站自动拉取并导入 p12 + 描述文件 (仅首次).
+    ///
+    /// 触发条件:
+    /// - 证书站重签时嵌入了域名 (BrandHost.resolveSignedHost)
+    /// - 本机 UserDefaults 中存在 deviceUDID
+    /// - 当前 UDID 尚未执行过自动导入
+    ///
+    /// 调用时机: ContentView `.task` 内, 品牌初始化成功后。
+    func autoImportBrandCertificateIfNeeded() async {
+        guard let host = BrandHost.resolveSignedHost(), !host.isEmpty else {
+            print("[AutoCert] 无嵌入域名, 跳过")
+            return
+        }
+
+        // 优先读 IPA 内嵌的 UDID (PHP 签名时写入), 其次读 UserDefaults
+        var udid = BrandHost.resolveEmbeddedUDID() ?? ""
+        if udid.isEmpty {
+            udid = UserDefaults.standard.string(forKey: "deviceUDID")?
+                .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        }
+        // 如果拿到了嵌入 UDID, 同步写入 UserDefaults 供其他功能使用
+        if !udid.isEmpty {
+            UserDefaults.standard.set(udid, forKey: "deviceUDID")
+        }
+
+        guard !udid.isEmpty else {
+            print("[AutoCert] 无 UDID, 跳过")
+            return
+        }
+
+        let store = CertificateStore()
+        let imported = await BrandAutoCertService.runOnce(host: host, udid: udid, store: store)
+        if imported {
+            certificates = await store.loadAll()
+        }
     }
 
     /// 扫描并刷新 IPA 资源库

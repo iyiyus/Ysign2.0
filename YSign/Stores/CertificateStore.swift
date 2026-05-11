@@ -21,12 +21,8 @@ actor CertificateStore {
     // MARK: - 初始化
 
     init() {
-        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        self.storeDirectory = docs.appendingPathComponent("YSign/Certificates")
+        self.storeDirectory = YSInternalStorage.directory("Certificates")
         self.indexFile = storeDirectory.appendingPathComponent("certificates.json")
-
-        // 确保目录存在
-        try? FileManager.default.createDirectory(at: storeDirectory, withIntermediateDirectories: true)
     }
 
     // MARK: - 公开方法

@@ -21,12 +21,8 @@ actor IPALibraryManager {
     // MARK: - 初始化
 
     init() {
-        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        self.libraryDirectory = docs.appendingPathComponent("YSign/Library")
+        self.libraryDirectory = YSInternalStorage.directory("Library")
         self.indexFile = libraryDirectory.appendingPathComponent("library.json")
-
-        // 确保目录存在
-        try? FileManager.default.createDirectory(at: libraryDirectory, withIntermediateDirectories: true)
     }
 
     // MARK: - 公开方法

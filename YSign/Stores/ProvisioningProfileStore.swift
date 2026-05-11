@@ -16,11 +16,7 @@ actor ProvisioningProfileStore {
     // MARK: - 初始化
 
     init() {
-        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        self.storeDirectory = docs.appendingPathComponent("YSign/Profiles")
-
-        // 确保目录存在
-        try? FileManager.default.createDirectory(at: storeDirectory, withIntermediateDirectories: true)
+        self.storeDirectory = YSInternalStorage.directory("Profiles")
     }
 
     // MARK: - 公开方法

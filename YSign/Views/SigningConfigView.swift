@@ -821,6 +821,7 @@ class SigningState: ObservableObject {
                     ipaURL: ipaURL,
                     certificate: identity,
                     options: opts,
+                    outputDirectory: YSInternalStorage.directory("Signed"),
                     onProgress: { [weak self] stage, progress in
                         guard throttle.shouldUpdate() else { return }
                         DispatchQueue.main.async {

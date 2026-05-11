@@ -52,11 +52,9 @@ actor AppSourceStore {
     private let cacheFile: URL
 
     init() {
-        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        self.storeDirectory = docs.appendingPathComponent("YSign/Sources")
+        self.storeDirectory = YSInternalStorage.directory("Sources")
         self.indexFile = storeDirectory.appendingPathComponent("sources.json")
         self.cacheFile = storeDirectory.appendingPathComponent("apps_cache.json")
-        try? FileManager.default.createDirectory(at: storeDirectory, withIntermediateDirectories: true)
     }
 
     // MARK: - 源 URL 管理

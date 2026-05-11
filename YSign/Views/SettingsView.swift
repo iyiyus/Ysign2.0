@@ -291,29 +291,31 @@ struct SettingsView: View {
     /// 计算缓存目录的总大小
     private func calculateCacheSize() async -> String {
         let fm = FileManager.default
-        let docs = fm.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let signedDir = docs.appendingPathComponent("YSign/Signed")
+        let signedDir = YSInternalStorage.directory("Signed")
+        let brandingDir = YSInternalStorage.directory("Branding")
+        let sourcesDir = YSInternalStorage.directory("Sources")
+        let libraryDir = YSInternalStorage.directory("Library")
         let tempDir = fm.temporaryDirectory
+        let cachesDir = fm.urls(for: .cachesDirectory, in: .userDomainMask).first!
 
         var totalSize: Int64 = 0
 
-        // 计算已签名目录大小
-        if let enumerator = fm.enumerator(at: signedDir, includingPropertiesForKeys: [.fileSizeKey]) {
-            while let url = enumerator.nextObject() as? URL {
-                let size = (try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize ?? 0
-                totalSize += Int64(size)
+        // 可清理的内部目录
+        let targets = [signedDir, brandingDir, sourcesDir, libraryDir, cachesDir]
+        for dir in targets {
+            if let enumerator = fm.enumerator(at: dir, includingPropertiesForKeys: [.fileSizeKey]) {
+                while let url = enumerator.nextObject() as? URL {
+                    let size = (try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize ?? 0
+                    totalSize += Int64(size)
+                }
             }
         }
 
-        // 计算临时目录中 YSign 相关文件
-        if let contents = try? fm.contentsOfDirectory(at: tempDir, includingPropertiesForKeys: [.fileSizeKey]) {
-            for url in contents where url.lastPathComponent.hasPrefix("YSign_") {
-                if let enumerator = fm.enumerator(at: url, includingPropertiesForKeys: [.fileSizeKey]) {
-                    while let fileURL = enumerator.nextObject() as? URL {
-                        let size = (try? fileURL.resourceValues(forKeys: [.fileSizeKey]))?.fileSize ?? 0
-                        totalSize += Int64(size)
-                    }
-                }
+        // 临时目录里所有文件
+        if let enumerator = fm.enumerator(at: tempDir, includingPropertiesForKeys: [.fileSizeKey]) {
+            while let url = enumerator.nextObject() as? URL {
+                let size = (try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize ?? 0
+                totalSize += Int64(size)
             }
         }
 
@@ -323,8 +325,7 @@ struct SettingsView: View {
     /// 清除缓存
     private func clearCache() {
         let fm = FileManager.default
-        let docs = fm.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let signedDir = docs.appendingPathComponent("YSign/Signed")
+        let signedDir = YSInternalStorage.directory("Signed")
 
         // 删除已签名 IPA
         try? fm.removeItem(at: signedDir)

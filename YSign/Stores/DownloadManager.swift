@@ -38,7 +38,7 @@ class DownloadManager: NSObject, ObservableObject, URLSessionDownloadDelegate {
 
     override init() {
         let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        self.downloadDirectory = docs.appendingPathComponent("YSign/Downloads")
+        self.downloadDirectory = docs.appendingPathComponent("Downloads")
         try? FileManager.default.createDirectory(at: downloadDirectory, withIntermediateDirectories: true)
         super.init()
         loadHistory()

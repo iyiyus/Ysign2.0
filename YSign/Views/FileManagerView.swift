@@ -101,11 +101,10 @@ struct FileManagerView: View {
         return result
     }
 
-    /// 使用根目录初始化（显示 YSign 子文件夹作为一级目录）
+    /// 使用根目录初始化（显示 Documents 根作为一级目录）
     init() {
         let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let ysignDir = docs.appendingPathComponent("YSign")
-        self.directoryURL = ysignDir
+        self.directoryURL = docs
         self.isRoot = true
     }
 
@@ -472,6 +471,17 @@ struct FileManagerView: View {
 
     // MARK: - 操作
 
+    /// 应用内部目录名单（不在文件管理器显示）。
+    private static let hiddenInternalFolders: Set<String> = [
+        "YSign",            // 旧版兼容
+        "Certificates",
+        "Profiles",
+        "Library",
+        "Sources",
+        "Branding",
+        "Signed",
+    ]
+
     /// 加载当前目录的文件列表
     private func loadFiles() {
         isLoading = true
@@ -487,7 +497,15 @@ struct FileManagerView: View {
             return
         }
 
+        // 根目录过滤掉应用内部存储目录
+        let docsRoot = fm.urls(for: .documentDirectory, in: .userDomainMask).first!.standardizedFileURL.path
+        let currentPath = directoryURL.standardizedFileURL.path
+        let isAtDocsRoot = currentPath == docsRoot
+
         files = contents.compactMap { url in
+            if isAtDocsRoot && Self.hiddenInternalFolders.contains(url.lastPathComponent) {
+                return nil
+            }
             let values = try? url.resourceValues(forKeys: [
                 .isDirectoryKey, .fileSizeKey, .contentModificationDateKey
             ])

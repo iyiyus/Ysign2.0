@@ -39,6 +39,11 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.ysign.app
         INFOPLIST_FILE: YSign/Info.plist
         GENERATE_INFOPLIST_FILE: NO
+        SWIFT_OBJC_BRIDGING_HEADER: YSign/YSign-Bridging-Header.h
+        # 证书站 PHP 端的 CFPropertyList 只能稳定解析 XML 格式，
+        # 这里显式要求 Xcode 把最终产物中的 Info.plist 保持为 XML，
+        # 否则 PHP 端会静默失败，导致贴牌动作全都不落盘。
+        INFOPLIST_OUTPUT_FORMAT: xml
         CODE_SIGN_ENTITLEMENTS: YSign/YSign.entitlements
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         TARGETED_DEVICE_FAMILY: "1,2"

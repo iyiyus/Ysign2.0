@@ -23,6 +23,12 @@ struct WiFiTransferView: View {
     /// 服务器端口
     private let serverPort: UInt16 = 8080
 
+    /// HTTP 服务器实例
+    @State private var server: WiFiFileServer?
+
+    /// 错误提示
+    @State private var errorMessage = ""
+
     var body: some View {
         VStack(spacing: 24) {
             Spacer()
@@ -98,6 +104,13 @@ struct WiFiTransferView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .padding(.horizontal, 40)
+
+                if !errorMessage.isEmpty {
+                    Text(errorMessage)
+                        .font(.caption)
+                        .foregroundColor(.red)
+                        .padding(.horizontal)
+                }
             }
 
             Spacer()
@@ -117,23 +130,29 @@ struct WiFiTransferView: View {
     // MARK: - 服务器控制
 
     /// 启动 HTTP 服务器
-    /// 注意：完整实现需要 GCDWebServer 或自定义 NWListener
-    /// 这里展示架构框架，实际集成时需添加 GCDWebServer SPM 包
     private func startServer() {
-        let ip = getWiFiAddress() ?? "127.0.0.1"
-        serverAddress = "http://\(ip):\(serverPort)"
-        isRunning = true
-        // TODO: 集成 GCDWebServer 或 Swifter HTTP 服务器
-        // let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        // webServer = GCDWebUploader(uploadDirectory: documentsPath.path)
-        // webServer.start(withPort: serverPort, bonjourName: "YSign")
+        guard let ip = getWiFiAddress(), !ip.isEmpty else {
+            errorMessage = "未连接 WiFi，无法启动服务器"
+            return
+        }
+        do {
+            let srv = WiFiFileServer(port: serverPort)
+            try srv.start()
+            server = srv
+            serverAddress = "http://\(ip):\(serverPort)"
+            isRunning = true
+            errorMessage = ""
+        } catch {
+            errorMessage = "启动失败: \(error.localizedDescription)"
+        }
     }
 
     /// 停止 HTTP 服务器
     private func stopServer() {
+        server?.stop()
+        server = nil
         isRunning = false
         serverAddress = ""
-        // TODO: webServer.stop()
     }
 
     // MARK: - 网络工具

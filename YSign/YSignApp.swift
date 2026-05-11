@@ -10,13 +10,26 @@ import SwiftUI
 struct YSignApp: App {
     @StateObject private var appState = AppState()
 
+    /// 外观模式（0=跟随系统，1=浅色，2=深色）
+    @AppStorage("appearanceMode") private var appearanceMode = 0
+
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(appState)
+                .preferredColorScheme(resolvedColorScheme)
                 .onOpenURL { url in
                     handleOpenURL(url)
                 }
+        }
+    }
+
+    /// 根据 appearanceMode 解析为 SwiftUI ColorScheme
+    private var resolvedColorScheme: ColorScheme? {
+        switch appearanceMode {
+        case 1:  return .light
+        case 2:  return .dark
+        default: return nil    // 跟随系统
         }
     }
 
