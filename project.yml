@@ -1,0 +1,48 @@
+## XcodeGen 项目配置文件
+## 使用方法: 安装 xcodegen 后运行 `xcodegen generate`
+## 会自动生成 YSign.xcodeproj
+
+name: YSign
+options:
+  bundleIdPrefix: com.ysign
+  deploymentTarget:
+    iOS: "16.0"
+  xcodeVersion: "15.0"
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MARKETING_VERSION: "2.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+
+packages:
+  ZIPFoundation:
+    url: https://github.com/weichsel/ZIPFoundation.git
+    from: "0.9.18"
+
+targets:
+  YSign:
+    type: application
+    platform: iOS
+    sources:
+      - path: YSign
+        excludes:
+          - "**/.DS_Store"
+      - path: Sources/SigningEngine
+        excludes:
+          - "**/.DS_Store"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ysign.app
+        INFOPLIST_FILE: YSign/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        CODE_SIGN_ENTITLEMENTS: YSign/YSign.entitlements
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: true
+    dependencies:
+      - package: ZIPFoundation
+    postBuildScripts: []

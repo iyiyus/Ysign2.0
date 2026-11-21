@@ -1,0 +1,20 @@
+# Xcode
+build/
+*.xcuserdata
+*.xcworkspace/xcuserdata/
+DerivedData/
+
+# macOS
+.DS_Store
+
+
+
+# Swift Package Manager
+.build/
+
+
+# IPA 产物
+*.ipa
+
+# 后台模板源码不入库
+fastadmin/
