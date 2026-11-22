@@ -706,14 +706,28 @@ struct FileManagerView: View {
     }
 
     /// 压缩文件/文件夹为 zip
+    ///
+    /// 不能用 NSFileCoordinator(.forUploading)——它只对文件夹打包成 zip，
+    /// 对单个文件返回的是原文件本身，会生成「JSON/ipa 原文件改名 .zip」
+    /// 的假 zip（解压时报 ArchiveError 13，或 ipa 被解成 Payload 文件夹）。
+    /// 改用 ZIPFoundation 的 zipItem 正经打包，文件与目录都支持。
     private func compressFile(_ file: FileItem) {
         Task {
             let zipName = file.name.replacingOccurrences(of: ".\(file.url.pathExtension)", with: "") + ".zip"
             let zipURL = file.url.deletingLastPathComponent().appendingPathComponent(zipName)
-            let coordinator = NSFileCoordinator()
-            var error: NSError?
-            coordinator.coordinate(readingItemAt: file.url, options: .forUploading, error: &error) { tempURL in
-                try? FileManager.default.moveItem(at: tempURL, to: zipURL)
+            do {
+                if FileManager.default.fileExists(atPath: zipURL.path) {
+                    try FileManager.default.removeItem(at: zipURL)
+                }
+                try FileManager.default.zipItem(
+                    at: file.url,
+                    to: zipURL,
+                    shouldKeepParent: true,
+                    compressionMethod: .deflate
+                )
+                showToastMessage("压缩完成")
+            } catch {
+                showToastMessage("压缩失败: \(error.localizedDescription)")
             }
             loadFiles()
         }
@@ -736,6 +750,15 @@ struct FileManagerView: View {
             try FileManager.default.createDirectory(at: finalDest, withIntermediateDirectories: true)
             let ext = file.url.pathExtension.lowercased()
             if ext == "zip" || ext == "ipa" {
+                // ZIP 魔数校验：「JSON 改名 .zip」之类的假 zip 会让
+                // unzipItem 报难懂的 ArchiveError 13，提前拦下给明确提示
+                let head = (try? Data(contentsOf: file.url, options: [.alwaysMapped]))?.prefix(2)
+                guard head == Data("PK".utf8) else {
+                    throw CocoaError(
+                        .fileReadCorruptFile,
+                        userInfo: [NSLocalizedDescriptionKey: "不是有效的 ZIP 文件（文件内容不是 zip 格式）"]
+                    )
+                }
                 // IPA 本质是 ZIP
                 try FileManager.default.unzipItem(at: file.url, to: finalDest)
             } else {
