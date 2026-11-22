@@ -55,10 +55,12 @@ struct CertificatesView: View {
             )
         }
         // 导入文件夹（内含 P12 / 描述文件 / ZIP）；asCopy 必须为 false，否则 iOS 断言崩溃
+        // 文件夹选择必须单选：iOS 16.x 多选模式下选中文件夹后「打开」按钮会禁用
         .sheet(isPresented: $showingFolderPicker) {
             DocumentPickerView(
                 contentTypes: [.folder],
                 asCopy: false,
+                allowsMultipleSelection: false,
                 onPick: { urls in
                     handleImport(urls)
                 },

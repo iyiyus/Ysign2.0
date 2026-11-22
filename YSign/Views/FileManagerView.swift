@@ -1170,12 +1170,17 @@ struct DocumentPickerView: UIViewControllerRepresentable {
     /// 返回的 URL 需调用方使用安全作用域访问
     var asCopy: Bool = true
 
+    /// 是否允许多选。
+    /// iOS 16.x 已知问题：sheet 内呈现的多选文件选择器在选中文件夹后
+    /// 「打开」按钮被禁用（点不动），选择文件夹时必须传 false。
+    var allowsMultipleSelection: Bool = true
+
     let onPick: ([URL]) -> Void
     let onDismiss: () -> Void
 
     func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
         let picker = UIDocumentPickerViewController(forOpeningContentTypes: contentTypes, asCopy: asCopy)
-        picker.allowsMultipleSelection = true
+        picker.allowsMultipleSelection = allowsMultipleSelection
         picker.delegate = context.coordinator
         return picker
     }
