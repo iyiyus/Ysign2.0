@@ -31,7 +31,7 @@ struct InAppFilePicker: View {
 
         var icon: String {
             switch url.pathExtension.lowercased() {
-            case "ipa": return "app.gift.fill"
+            case "ipa", "tipa": return "app.gift.fill"
             case "p12", "pfx": return "lock.shield.fill"
             case "mobileprovision": return "checkmark.seal.fill"
             case "dylib": return "puzzlepiece.extension.fill"

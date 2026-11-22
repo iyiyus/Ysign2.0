@@ -86,7 +86,7 @@ struct SigningHubView: View {
             }
             .sheet(isPresented: $showingImporter) {
                 InAppFilePicker(
-                    allowedExtensions: ["ipa"],
+                    allowedExtensions: ["ipa", "tipa"],
                     title: "选择 IPA 文件"
                 ) { url in
                     Task {

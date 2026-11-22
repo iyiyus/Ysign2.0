@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import UniformTypeIdentifiers
 
 /// 资源库页面
@@ -182,16 +183,14 @@ struct AppListRow: View {
 /// IPA 导入辅助：从系统「文件」App 选择的安全作用域 URL 导入资源库
 enum IPAImportHelper {
 
-    /// .ipa 对应的 UTType（无注册类型时回退到通用 Data）
+    /// .ipa 对应的 UTType
+    ///
+    /// iOS 16.3 真机实测：动态 ipa 类型与 .zip / .archive 组合会让文档选择器
+    /// 过滤异常（ipa / tipa 文件置灰不可选）。改用根类型 public.data（.data）——
+    /// 任何文件都 conform 到它，所有系统版本行为一致、必定可选，
+    /// 具体是不是 ipa / tipa 由导入层和解析层兜底校验。
     static var ipaContentTypes: [UTType] {
-        // 系统没有内置 ipa UTType，文件 App 通常把 ipa 识别为 zip 归档。
-        // 必须用宽集合兜底，否则选中 ipa 后「打开」按钮不可点。
-        var types: [UTType] = []
-        if let dynamic = UTType(filenameExtension: "ipa", conformingTo: .data) {
-            types.append(dynamic)
-        }
-        types.append(contentsOf: [.zip, .archive, .data])
-        return types
+        [.data]
     }
 
     /// 从「文件」App 的 URL 导入 IPA（处理安全作用域访问）
@@ -239,22 +238,30 @@ struct IPAImportMenuButton<LabelContent: View>: View {
 }
 
 /// 系统「文件」导入器修饰器（统一挂在应用页根视图，只挂一份）
+///
+/// 不用 SwiftUI 的 .fileImporter：iOS 16.0–16.3 真机实测其类型过滤不可靠，
+/// ipa / tipa 置灰无法选择。复用文件管理器的 UIDocumentPickerViewController
+/// 封装（DocumentPickerView），[.data] 根类型 + asCopy 等同于
+/// 「允许选择任何文件」，所有系统版本行为一致，ipa / tipa 都可选。
 struct IPAFileImporter: ViewModifier {
     @Binding var isPresented: Bool
     var onImported: (() -> Void)? = nil
 
     func body(content: Content) -> some View {
         content
-            .fileImporter(
-                isPresented: $isPresented,
-                allowedContentTypes: IPAImportHelper.ipaContentTypes,
-                allowsMultipleSelection: false
-            ) { result in
-                if case .success(let urls) = result, let url = urls.first {
-                    IPAImportHelper.importFromFilesURL(url) {
-                        onImported?()
-                    }
-                }
+            .sheet(isPresented: $isPresented) {
+                DocumentPickerView(
+                    contentTypes: IPAImportHelper.ipaContentTypes,
+                    asCopy: true,
+                    onPick: { urls in
+                        guard let url = urls.first else { return }
+                        IPAImportHelper.importFromFilesURL(url) {
+                            onImported?()
+                        }
+                    },
+                    onDismiss: {}
+                )
+                .ignoresSafeArea()
             }
     }
 }

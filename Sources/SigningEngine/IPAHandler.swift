@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 import ZIPFoundation
 
 /// IPA 处理器 —— 负责 IPA 文件的解压、修改和重新打包
@@ -513,6 +514,10 @@ struct IPAHandler {
         // 收集所有可能的图标名称
         var iconNames: [String] = []
         let iconFiles = (plist["CFBundleIcons"] as? [String: Any])?["CFBundlePrimaryIcon"] as? [String: Any]
+        // asset catalog 中的资产名（现代 app 的图标都在 Assets.car 里）
+        if let iconName = iconFiles?["CFBundleIconName"] as? String {
+            iconNames.append(iconName)
+        }
         if let names = iconFiles?["CFBundleIconFiles"] as? [String] {
             iconNames.append(contentsOf: names)
         }
@@ -521,6 +526,14 @@ struct IPAHandler {
         if let names = iPadIcons?["CFBundleIconFiles"] as? [String] {
             iconNames.append(contentsOf: names)
         }
+        // 旧式顶层键（TrollStore tipa 等手工打包常用）：
+        // CFBundleIconFiles（数组）与 CFBundleIconFile（单数），名字可能带完整扩展名
+        if let names = plist["CFBundleIconFiles"] as? [String] {
+            iconNames.append(contentsOf: names)
+        }
+        if let name = plist["CFBundleIconFile"] as? String {
+            iconNames.append(name)
+        }
         // 通用回退名称
         iconNames.append(contentsOf: ["AppIcon60x60", "AppIcon76x76", "AppIcon"])
 
@@ -528,13 +541,28 @@ struct IPAHandler {
         let appPrefix = archive.first { $0.path.hasSuffix(".app/Info.plist") }?
             .path.replacingOccurrences(of: "Info.plist", with: "") ?? "Payload/"
 
+        // 构建候选基础名：有的包图标名带完整扩展名（如 "icon@3x.png"），
+        // 去掉 .png 与 @2x/@3x 后缀再参与拼后缀匹配，否则拼出来必然 miss
+        var candidateNames: [String] = []
+        for name in iconNames {
+            candidateNames.append(name)
+            if name.hasSuffix(".png") {
+                let base = String(name.dropLast(4))
+                candidateNames.append(base)
+                candidateNames.append(
+                    base.replacingOccurrences(of: "@2x", with: "")
+                        .replacingOccurrences(of: "@3x", with: "")
+                )
+            }
+        }
+
         // 按优先级从大到小搜索（@3x > @2x > 无后缀）
         let suffixes = ["@3x.png", "@2x.png", ".png", "@3x~ipad.png", "@2x~ipad.png"]
-        outer: for iconName in iconNames.reversed() {
+        outer: for baseName in candidateNames.reversed() {
             for suffix in suffixes {
-                let targetPath = appPrefix + iconName + suffix
+                let targetPath = appPrefix + baseName + suffix
                 for entry in archive {
-                    if entry.path == targetPath || entry.path.hasSuffix("/" + iconName + suffix) {
+                    if entry.path == targetPath || entry.path.hasSuffix("/" + baseName + suffix) {
                         var data = Data()
                         _ = try? archive.extract(entry) { chunk in
                             data.append(chunk)
@@ -548,13 +576,15 @@ struct IPAHandler {
             }
         }
 
-        // 最后兜底：模糊匹配任何包含 AppIcon 的 png
+        // 最后兜底一：模糊匹配 .app 内任何文件名含 icon 的 png
+        // （手工打包的包 Info.plist 里可能完全不声明图标，只有裸 icon.png）
         if iconData == nil {
             var bestEntry: Entry?
             var bestSize: UInt64 = 0
             for entry in archive {
                 let p = entry.path.lowercased()
-                if p.contains("appicon") && p.hasSuffix(".png") && !p.contains("contents.json") {
+                if p.hasPrefix(appPrefix.lowercased())
+                    && p.contains("icon") && p.hasSuffix(".png") && !p.contains("contents.json") {
                     if entry.uncompressedSize > bestSize {
                         bestSize = entry.uncompressedSize
                         bestEntry = entry
@@ -568,7 +598,69 @@ struct IPAHandler {
             }
         }
 
+        // 最后兜底二：从 Assets.car 渲染图标
+        // 现代应用图标编译进 asset catalog，ZIP 里没有裸 png。
+        // 把 Info.plist + Assets.car 解出并拼成一个临时 .app bundle，
+        // 用公开 API UIImage(named:in:) 让 CoreUI 渲染真图标。
+        if iconData == nil,
+           let carEntry = archive.first(where: { $0.path == appPrefix + "Assets.car" }) {
+            iconData = Self.renderIconFromAssetCatalog(
+                archive: archive,
+                appPrefix: appPrefix,
+                iconNames: iconNames,
+                carEntry: carEntry
+            )
+        }
+
         return (name: name, bundleID: bundleID, version: version, buildNumber: buildNumber, icon: iconData)
+    }
+
+    /// 从 Assets.car 渲染应用图标
+    ///
+    /// 原理：asset catalog 编译产物 Assets.car 是 CoreUI 私有格式，
+    /// 但 UIImage(named:in:) 可以从任意 bundle 目录加载并渲染资产。
+    /// 只解压 Info.plist 与 Assets.car（几 MB），不解压整个应用。
+    private static func renderIconFromAssetCatalog(
+        archive: Archive,
+        appPrefix: String,
+        iconNames: [String],
+        carEntry: Entry
+    ) -> Data? {
+        let fm = FileManager.default
+        let bundleURL = fm.temporaryDirectory
+            .appendingPathComponent("icon-\(UUID().uuidString).app")
+        defer { try? fm.removeItem(at: bundleURL) }
+
+        do {
+            try fm.createDirectory(at: bundleURL, withIntermediateDirectories: true)
+
+            // 解压 Info.plist（Bundle 加载需要）
+            if let plistEntry = archive.first(where: { $0.path == appPrefix + "Info.plist" }) {
+                var data = Data()
+                _ = try archive.extract(plistEntry) { chunk in data.append(chunk) }
+                try data.write(to: bundleURL.appendingPathComponent("Info.plist"))
+            }
+
+            // 解压 Assets.car
+            var carData = Data()
+            _ = try archive.extract(carEntry) { chunk in carData.append(chunk) }
+            try carData.write(to: bundleURL.appendingPathComponent("Assets.car"))
+
+            guard let bundle = Bundle(url: bundleURL) else { return nil }
+
+            // 依次尝试：资产名（CFBundleIconName）→ 通用名 AppIcon
+            var candidates = iconNames
+            candidates.append(contentsOf: ["AppIcon", "AppIcon60x60", "AppIcon76x76"])
+            for name in candidates {
+                if let image = UIImage(named: name, in: bundle, compatibleWith: nil),
+                   let png = image.pngData(), !png.isEmpty {
+                    return png
+                }
+            }
+        } catch {
+            return nil
+        }
+        return nil
     }
 
     // MARK: - 清理
